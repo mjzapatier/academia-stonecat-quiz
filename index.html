@@ -9,7 +9,7 @@
   *{margin:0;padding:0;box-sizing:border-box}
   body{
     font-family:'Nunito',sans-serif;
-    background:#D5F0FA;
+    background:#dbfbf3;
     min-height:100vh;
     display:flex;
     justify-content:center;
@@ -303,7 +303,7 @@
   }
 
   @media (max-width:520px){
-    body{padding:0;background:#D5F0FA}
+    body{padding:0;background:#dbfbf3}
     .app{max-width:none;min-height:100vh;border-radius:0;box-shadow:none}
     .portada{min-height:100vh;border-radius:0;padding-bottom:6%}
     .s{padding:22px 18px 28px}
@@ -372,7 +372,7 @@
   .b-portada:focus-visible{outline:4px solid rgba(101,225,243,.85);outline-offset:4px}
 
   @media (max-width:520px){
-    body{padding:0;background:#D5F0FA}
+    body{padding:0;background:#dbfbf3}
     .app{max-width:none;min-height:100vh;border-radius:0;box-shadow:none}
     .portada{border-radius:0}
     .s{padding:22px 18px 28px}
@@ -786,12 +786,31 @@ function ans(q, perfil, el){
   }, 300);
 }
 
+// ============ SCORING DE PERFILES ============
+function scoreResults(){
+  const c = {};
+  R.filter(Boolean).forEach(p => {
+    const weight = p === 'jugadora' ? 3.25 : 1;
+    c[p] = (c[p] || 0) + weight;
+  });
+  return c;
+}
+
+function winningProfile(c){
+  const keys = Object.keys(c);
+  if(!keys.length) return 'sobreprotectora';
+  const priority = ['jugadora','gourmet','sobreprotectora','primeriza','zen'];
+  return keys.reduce((winner, current) => {
+    if (c[current] > c[winner]) return current;
+    if (c[current] === c[winner] && priority.indexOf(current) < priority.indexOf(winner)) return current;
+    return winner;
+  });
+}
+
 // ============ CALCULAR RESULTADO ============
 function calc(){
-  let c={};
-  R.filter(Boolean).forEach(p=>c[p]=(c[p]||0)+1);
-  let keys = Object.keys(c);
-  let w = keys.length ? keys.reduce((a,b)=>c[a]>=c[b]?a:b) : 'sobreprotectora';
+  let c = scoreResults();
+  let w = winningProfile(c);
   let perfil=P[w];
 
   // Texto resultado
@@ -847,10 +866,8 @@ async function buildDiplomaCanvas() {
     canvas.height = H;
 
     // 1. Cargar imagen del diploma
-    let c = {};
-    R.filter(Boolean).forEach(p => c[p]=(c[p]||0)+1);
-    let keys = Object.keys(c);
-    let w = keys.length ? keys.reduce((a,b)=>c[a]>=c[b]?a:b) : 'sobreprotectora';
+    let c = scoreResults();
+    let w = winningProfile(c);
     
     const bgImg = new Image();
     bgImg.onload = function() {
@@ -873,9 +890,9 @@ async function buildDiplomaCanvas() {
         const catImg = new Image();
         catImg.onload = function() {
           // Foto circular premium del gato
-          const size = 242;
+          const size = 360;
           const areaX = (W - size) / 2;
-          const areaY = 915;
+          const areaY = Math.round((H * 0.539) - (size / 2));
           const areaW = size, areaH = size;
           
           // Calcular dimensiones para object-fit: cover cuadrado
