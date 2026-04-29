@@ -475,9 +475,10 @@
 
 
   /* OVERRIDES v6: diplomas nuevos 1152x2048, texto y foto alineados */
-  .diploma-nombre{top:38.9% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:68% !important;font-size:clamp(15px,4.2vw,25px) !important;line-height:1 !important;font-weight:900 !important;color:#1B2D6B !important;text-align:center !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
-  .diploma-cat-nombre{top:66.4% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:56% !important;font-size:clamp(15px,4vw,24px) !important;line-height:1 !important;font-weight:900 !important;color:#1B2D6B !important;text-align:center !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
-  .diploma-foto{top:51.2% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:clamp(180px,40%,235px) !important;height:auto !important;aspect-ratio:1/1 !important;object-fit:cover !important;border-radius:50% !important;border:clamp(3px,1.2vw,6px) solid #DBFBF3 !important;box-shadow:0 8px 20px rgba(13,25,77,.2),0 0 0 clamp(2px,.6vw,3px) #D7B56D !important;background:#DBFBF3 !important;}
+  /* OVERRIDES v8: Zen code-friendly + foto reducida 15% */
+  .diploma-nombre{top:38.2% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:68% !important;font-size:clamp(15px,4.2vw,25px) !important;line-height:1 !important;font-weight:900 !important;color:#1B2D6B !important;text-align:center !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+  .diploma-cat-nombre{top:72.4% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:56% !important;font-size:clamp(15px,4vw,24px) !important;line-height:1 !important;font-weight:900 !important;color:#1B2D6B !important;text-align:center !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+  .diploma-foto{top:53.9% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:clamp(153px,34%,200px) !important;height:auto !important;aspect-ratio:1/1 !important;object-fit:cover !important;border-radius:50% !important;border:clamp(3px,1.2vw,6px) solid #DBFBF3 !important;box-shadow:0 8px 20px rgba(13,25,77,.2),0 0 0 clamp(2px,.6vw,3px) #D7B56D !important;background:#DBFBF3 !important;}
   #p-9.on .diploma-foto{animation:photoPopV6 .75s ease-out .45s both}
   @keyframes photoPopV6{0%{opacity:0;transform:translate(-50%,-50%) scale(.75)}80%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}100%{transform:translate(-50%,-50%) scale(1)}}
 
@@ -861,20 +862,20 @@ async function buildDiplomaCanvas() {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const nombreCompleto = U.n + ' ' + U.a;
-      ctx.fillText(nombreCompleto, W/2, 748);
+      ctx.fillText(nombreCompleto, W/2, 734);
 
       // 3. Nombre del gato (encima de línea y=1712)
       ctx.font = 'bold 44px Nunito, sans-serif';
-      ctx.fillText(U.cn, W/2, 1274);
+      ctx.fillText(U.cn, W/2, 1390);
 
       // 4. Foto del gato (si existe) — círculo más grande, centrado sobre el placeholder
       if (U.foto) {
         const catImg = new Image();
         catImg.onload = function() {
           // Foto circular premium del gato
-          const size = 285;
+          const size = 242;
           const areaX = (W - size) / 2;
-          const areaY = 835;
+          const areaY = 915;
           const areaW = size, areaH = size;
           
           // Calcular dimensiones para object-fit: cover cuadrado
