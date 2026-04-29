@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academia Stonecat · ¿Qué Karen sos?</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:#D5F0FA;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    padding:16px;
+    color:#1B2B5C;
+  }
+  .app{
+    width:100%;max-width:480px;
+    background:#fff;border-radius:28px;
+    box-shadow:0 16px 50px rgba(27,43,92,.14);
+    overflow-y:auto;
+  }
+
+  /* HEADER */
+  .hdr{
+    background:#ffffff;
+    padding:16px 20px 13px;
+    text-align:center;
+    display:none;
+    border-bottom:1px solid rgba(27,45,107,.08);
+    box-shadow:0 6px 18px rgba(27,43,92,.05);
+  }
+  .hdr img{
+    max-width:150px;
+    width:48%;
+    height:auto;
+    display:block;
+    margin:0 auto;
+    object-fit:contain;
+  }
+  .pbar{height:6px;background:#EAF7FC;border-radius:999px;margin-top:12px;overflow:hidden}
+  .pfill{height:100%;background:#65E1F3;border-radius:999px;width:0%;transition:width .35s ease}
+
+  /* PORTADA */
+  .portada{
+    background-image:url("assets/portada-mvp.webp");
+    background-size:cover;
+    background-position:center top;
+    background-repeat:no-repeat;
+    min-height:calc(100vh - 32px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    padding-bottom:5.5%;
+    border-radius:28px;
+    position:relative;
+    overflow:hidden;
+    touch-action:manipulation;
+  }
+  @supports not (background-image:url("assets/portada-mvp.webp")){
+    .portada{background-image:url("assets/portada-mvp.jpg")}
+  }
+  .card h1{font-size:26px;font-weight:900;color:#1B2B5C;line-height:1.2;margin-bottom:10px}
+  .card p{color:#555;font-size:14px;margin-bottom:14px}
+  .checks{list-style:none;text-align:left;margin-bottom:16px}
+  .checks li{font-size:13px;padding:4px 0;color:#1B2B5C;font-weight:600}
+  .spoiler{font-size:13px;color:#5EC8E8;font-weight:700;margin-bottom:18px}
+
+  /* SCREENS */
+  .s{display:none;padding:22px 20px}
+  .s.on{display:block}
+  .lbl{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#5EC8E8;margin-bottom:8px}
+  h2{font-size:20px;font-weight:900;color:#1B2B5C;margin-bottom:6px}
+  .sub{font-size:13px;color:#777;margin-bottom:18px}
+
+  /* FORMS */
+  .fg{margin-bottom:14px}
+  label{font-size:13px;font-weight:700;color:#1B2B5C;display:block;margin-bottom:5px}
+  input,select{
+    width:100%;padding:12px 14px;
+    border:2px solid #e0e8f0;border-radius:12px;
+    font-family:'Nunito',sans-serif;font-size:14px;color:#1B2B5C;
+    background:#FEFCF5;outline:none;
+    transition:border-color .2s;
+  }
+  input:focus,select:focus{border-color:#5EC8E8}
+  .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  /* RADIO */
+  .rads{display:flex;flex-direction:column;gap:9px;margin-top:8px}
+  .rad{
+    padding:13px 15px;background:#FEFCF5;
+    border:2px solid #eee;border-radius:12px;
+    cursor:pointer;font-size:14px;font-weight:600;
+    transition:all .2s;
+  }
+  .rad:hover{background:#D5F0FA;border-color:#5EC8E8}
+  .rad.sel{background:#5EC8E8;color:#fff;border-color:#1B2B5C}
+
+  /* FOTO UPLOAD */
+  .photo-upload-area{
+    border:2px dashed #ccc;border-radius:16px;
+    padding:24px;text-align:center;
+    cursor:pointer;background:#FEFCF5;
+    transition:all .2s;margin-top:8px;
+  }
+  .photo-upload-area:hover{border-color:#5EC8E8;background:#D5F0FA}
+  .photo-upload-area p{font-size:13px;color:#999;margin-top:6px}
+  .photo-upload-area small{font-size:11px;color:#bbb}
+  #photo-preview{width:100%;border-radius:12px;display:none;margin-top:8px;max-height:200px;object-fit:cover}
+
+  /* BOTONES */
+  .b{
+    width:100%;padding:15px;border:none;border-radius:14px;
+    font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;
+    cursor:pointer;transition:all .2s;margin-top:14px;
+  }
+  .b1{background:#5EC8E8;color:#fff}
+  .b1:hover{background:#3db8dc}
+  .b2{background:#1B2B5C;color:#fff}
+  .b2:hover{background:#2a3f80}
+  .b3{background:#f0f4f8;color:#1B2B5C}
+  .b3:hover{background:#e0e8f0}
+
+  /* QUIZ */
+  .opts{display:flex;flex-direction:column;gap:9px;margin-top:14px}
+  .o{
+    padding:14px 15px;background:#FEFCF5;border:2px solid #eee;border-radius:14px;
+    cursor:pointer;font-size:14px;font-weight:600;display:flex;align-items:center;gap:11px;transition:all .2s
+  }
+  .o:hover{background:#D5F0FA;border-color:#5EC8E8}
+  .o.sel{background:#5EC8E8;color:#fff;border-color:#1B2B5C}
+
+  /* LOADING */
+  .loading{text-align:center;padding:40px 20px}
+  .loading .cat-anim{font-size:56px;animation:bounce 1s infinite}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .loading p{margin-top:14px;font-size:15px;color:#5EC8E8;font-weight:700}
+
+  /* RESULTADO */
+  .rev{font-size:48px;text-align:center;margin-bottom:10px}
+  .txt{font-size:14px;color:#555;text-align:center;line-height:1.6;margin-bottom:8px}
+
+  /* DIPLOMA CON IMAGEN REAL */
+  .diploma-wrap{margin:14px 0 0;position:relative}
+  .diploma-canvas-container{
+    width:100%;
+    aspect-ratio:9/16;
+    position:relative;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 14px 36px rgba(13,25,77,.32);
+  }
+  .diploma-bg{
+    width:100%;height:100%;
+    object-fit:cover;
+    position:absolute;top:0;left:0;
+  }
+  .diploma-overlay{
+    position:absolute;top:0;left:0;
+    width:100%;height:100%;
+    display:flex;flex-direction:column;
+    align-items:center;
+    font-family:'Nunito',sans-serif;
+  }
+  /* Nombre del tutor — sobre la línea de puntos */
+  /* En imagen 1080x1920: linea puntos y=467, area interior x=110-969 */
+  /* En display relativo: y=467/1920=24.3%, x centrado */
+  .diploma-nombre{
+    position:absolute;
+    top:22.5%;
+    left:50%;
+    transform:translateX(-50%);
+    width:75%;
+    text-align:center;
+    font-size:clamp(12px,3.2vw,18px);
+    font-weight:800;
+    color:#1B2B5C;
+    letter-spacing:0.3px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  /* Foto del gato — area: y=1200-1660, x=220-820 en imagen 1080x1920 */
+  /* y_top=1200/1920=62.5%, altura=(1660-1200)/1920=24% */
+  /* x_left=220/1080=20.4%, width=(820-220)/1080=55.6% */
+  .diploma-foto{
+    position:absolute;
+    top:62.5%;
+    left:20.4%;
+    width:55.6%;
+    height:24%;
+    object-fit:cover;
+    border-radius:12px;
+  }
+  /* Nombre del gato — sobre línea y=1712, y=1712/1920=89.2% */
+  .diploma-cat-nombre{
+    position:absolute;
+    top:87.5%;
+    left:50%;
+    transform:translateX(-50%);
+    width:60%;
+    text-align:center;
+    font-size:clamp(11px,2.8vw,16px);
+    font-weight:800;
+    color:#1B2B5C;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* SHARE */
+  .share{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+
+  /* CONFETTI */
+  .confetti{position:fixed;font-size:22px;animation:fall linear forwards;pointer-events:none;z-index:999}
+  @keyframes fall{to{transform:translateY(105vh) rotate(360deg);opacity:0}}
+
+  /* CANVAS OCULTO para exportar */
+  #diploma-export-canvas{display:none}
+
+  .b-portada{
+    background:transparent;
+    color:#1B2B5C;
+    font-family:'Nunito',sans-serif;
+    font-size:26px;
+    font-weight:900;
+    border:3px dashed #5EC8E8;
+    border-radius:18px;
+    padding:18px 60px;
+    cursor:pointer;
+    transition:all .2s;
+    letter-spacing:1px;
+    width:85%;
+    text-align:center;
+    text-shadow:none;
+    backdrop-filter:blur(2px);
+  }
+  .b-portada:hover{background:rgba(94,200,232,0.15);transform:scale(1.02)}
+  .b-portada:active{transform:scale(0.97)}
+
+
+  /* NAVEGACIÓN / ATRÁS COMO ACCIÓN SECUNDARIA */
+  .hdr{position:relative}
+  .back-btn{
+    display:none;
+    width:auto;
+    margin:16px auto 0;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:#1B2D6B;
+    font-size:14px;
+    font-weight:900;
+    line-height:1.2;
+    cursor:pointer;
+    text-decoration:none;
+    box-shadow:none;
+    touch-action:manipulation;
+  }
+  .back-btn:hover{opacity:.82}
+  .back-btn:active{transform:none;opacity:.7}
+
+  /* CTA invisible sobre el botón dibujado en la portada */
+  .b-portada{
+    position:absolute;left:50%;bottom:4.2%;transform:translateX(-50%);
+    width:78%;max-width:360px;height:74px;margin:0;padding:0;
+    background:rgba(255,255,255,0.01);color:transparent;border:0;
+    border-radius:999px;cursor:pointer;z-index:30;touch-action:manipulation;
+    -webkit-tap-highlight-color:rgba(255,255,255,.25);
+  }
+  .b-portada:focus-visible{outline:4px solid rgba(255,255,255,.85);outline-offset:4px}
+  .b-portada:active{transform:translateX(-50%) scale(.98)}
+
+  /* FOTO CIRCULAR DEL GATO EN DIPLOMA */
+  .diploma-foto{
+    top:61.5%;left:50%;transform:translateX(-50%);
+    width:42%;height:auto;aspect-ratio:1/1;
+    object-fit:cover;border-radius:50%;
+    border:clamp(4px,1.6vw,8px) solid #DBFBF3;
+    box-shadow:0 8px 22px rgba(13,25,77,.22), 0 0 0 clamp(2px,.8vw,4px) #D7B56D;
+    background:#DBFBF3;
+  }
+
+  /* REVEAL LIVIANO DEL DIPLOMA */
+  .loading .cat-anim{font-size:58px;animation:floatCap 1.25s ease-in-out infinite}
+  @keyframes floatCap{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-16px) rotate(6deg)}}
+  #p-9.on .rev{animation:sparkPop .7s ease-out both}
+  #p-9.on .diploma-canvas-container{animation:diplomaReveal .85s cubic-bezier(.2,.9,.2,1) both}
+  #p-9.on .diploma-foto{animation:photoPop .75s ease-out .45s both}
+  #p-9.on .share{animation:fadeUp .55s ease-out .7s both}
+  @keyframes sparkPop{0%{opacity:0;transform:scale(.2) rotate(-20deg)}70%{opacity:1;transform:scale(1.18) rotate(8deg)}100%{transform:scale(1) rotate(0)}}
+  @keyframes diplomaReveal{0%{opacity:0;transform:translateY(24px) scale(.94);filter:brightness(1.35)}65%{opacity:1;transform:translateY(-4px) scale(1.015)}100%{transform:translateY(0) scale(1);filter:brightness(1)}}
+  @keyframes photoPop{0%{opacity:0;transform:translateX(-50%) scale(.75)}80%{opacity:1;transform:translateX(-50%) scale(1.06)}100%{transform:translateX(-50%) scale(1)}}
+  @keyframes fadeUp{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+
+  @media (max-width:520px){
+    .hdr{padding:14px 18px 12px}
+    .hdr img{max-width:138px;width:52%}
+    .back-btn{font-size:13px;margin-top:14px}
+  }
+
+  @media (max-width:520px){
+    body{padding:0;background:#D5F0FA}
+    .app{max-width:none;min-height:100vh;border-radius:0;box-shadow:none}
+    .portada{min-height:100vh;border-radius:0;padding-bottom:6%}
+    .s{padding:22px 18px 28px}
+    .b-portada{bottom:4.8%;height:70px;width:82%}
+  }
+
+
+  /* PORTADA COMPLETA 9:16 + BOTÓN HTML PREMIUM */
+  .portada{
+    background:#061a46;
+    min-height:auto;
+    height:auto;
+    display:block;
+    padding:0;
+    border-radius:28px;
+    position:relative;
+    overflow:hidden;
+    touch-action:manipulation;
+  }
+  .portada-img{
+    display:block;
+    width:100%;
+    height:auto;
+    aspect-ratio:9/16;
+    object-fit:contain;
+    object-position:center top;
+    user-select:none;
+    -webkit-user-drag:none;
+  }
+  .b-portada{
+    position:absolute;
+    left:50%;
+    top:72%;
+    transform:translateX(-50%);
+    width:77%;
+    max-width:390px;
+    min-height:58px;
+    height:clamp(58px, 8.2vw, 74px);
+    margin:0;
+    padding:0 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    border:3px solid #D7B56D;
+    background:linear-gradient(180deg,#123f91 0%,#061f62 52%,#071849 100%);
+    color:#fff;
+    font-size:clamp(20px,5.4vw,30px);
+    font-weight:900;
+    letter-spacing:.2px;
+    text-shadow:0 2px 0 rgba(0,0,0,.28);
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.28), inset 0 -5px 0 rgba(0,0,0,.18), 0 8px 0 #B88A2A, 0 14px 24px rgba(0,0,0,.26);
+    z-index:30;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:rgba(255,255,255,.25);
+  }
+  .b-portada::before{
+    content:"";
+    position:absolute;
+    inset:5px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.38);
+    pointer-events:none;
+  }
+  .b-portada:active{transform:translateX(-50%) translateY(4px);box-shadow:inset 0 3px 0 rgba(255,255,255,.22), inset 0 -3px 0 rgba(0,0,0,.18), 0 4px 0 #B88A2A, 0 8px 14px rgba(0,0,0,.24)}
+  .b-portada:focus-visible{outline:4px solid rgba(101,225,243,.85);outline-offset:4px}
+
+  @media (max-width:520px){
+    body{padding:0;background:#D5F0FA}
+    .app{max-width:none;min-height:100vh;border-radius:0;box-shadow:none}
+    .portada{border-radius:0}
+    .s{padding:22px 18px 28px}
+    .b-portada{top:72.2%;width:80%;min-height:54px}
+  }
+
+
+  /* MEDIDA FINAL FOTO CIRCULAR DEL GATO */
+  .diploma-foto{
+    top:61.5%;
+    left:50%;
+    transform:translateX(-50%);
+    width:clamp(150px,42%,220px);
+    height:auto;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    border-radius:50%;
+    border:clamp(4px,1.6vw,8px) solid #DBFBF3;
+    box-shadow:0 8px 22px rgba(13,25,77,.22), 0 0 0 clamp(2px,.8vw,4px) #D7B56D;
+    background:#DBFBF3;
+  }
+
+
+  /* AJUSTE FINAL CTA PORTADA - no tapa al gato, sin transparencia ni movimiento */
+  .b-portada{
+    position:absolute !important;
+    left:36% !important;
+    top:71.6% !important;
+    transform:translateX(-50%) !important;
+    width:58% !important;
+    max-width:310px !important;
+    min-height:48px !important;
+    height:clamp(48px, 6.2vw, 58px) !important;
+    margin:0 !important;
+    padding:0 16px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:999px !important;
+    border:3px solid #D7B56D !important;
+    background:linear-gradient(180deg,#123f91 0%,#061f62 52%,#071849 100%) !important;
+    color:#fff !important;
+    font-family: 'Nunito', sans-serif !important;
+    font-size:clamp(17px, 3.8vw, 24px) !important;
+    font-weight:900 !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+    letter-spacing:.1px !important;
+    text-shadow:0 2px 0 rgba(0,0,0,.28) !important;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.28), inset 0 -4px 0 rgba(0,0,0,.18), 0 6px 0 #B88A2A, 0 12px 22px rgba(0,0,0,.24) !important;
+    opacity:1 !important;
+    filter:none !important;
+    z-index:30 !important;
+    touch-action:manipulation !important;
+    -webkit-tap-highlight-color:rgba(255,255,255,.25) !important;
+  }
+  .b-portada:hover,
+  .b-portada:focus,
+  .b-portada:active{
+    opacity:1 !important;
+    filter:none !important;
+    background:linear-gradient(180deg,#123f91 0%,#061f62 52%,#071849 100%) !important;
+    transform:translateX(-50%) !important;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.28), inset 0 -4px 0 rgba(0,0,0,.18), 0 6px 0 #B88A2A, 0 12px 22px rgba(0,0,0,.24) !important;
+  }
+  .b-portada::before{
+    content:"";
+    position:absolute;
+    inset:5px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.38);
+    pointer-events:none;
+  }
+  @media (max-width:520px){
+    .hdr{padding:14px 18px 12px}
+    .hdr img{max-width:138px;width:52%}
+    .back-btn{font-size:13px;margin-top:14px}
+  }
+
+  @media (max-width:520px){
+    .b-portada{
+      left:39% !important;
+      top:72.4% !important;
+      width:64% !important;
+      max-width:330px !important;
+      min-height:50px !important;
+      height:clamp(50px, 12vw, 62px) !important;
+      font-size:clamp(18px, 5.1vw, 24px) !important;
+    }
+  }
+  @media (min-width:521px){
+    .b-portada{
+      left:35% !important;
+      top:72% !important;
+      width:56% !important;
+      max-width:300px !important;
+      font-size:22px !important;
+    }
+  }
+
+
+  /* OVERRIDES v6: diplomas nuevos 1152x2048, texto y foto alineados */
+  .diploma-nombre{top:37.7% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:68% !important;font-size:clamp(15px,4.2vw,25px) !important;line-height:1 !important;font-weight:900 !important;color:#1B2D6B !important;text-align:center !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+  .diploma-cat-nombre{top:65.2% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:56% !important;font-size:clamp(15px,4vw,24px) !important;line-height:1 !important;font-weight:900 !important;color:#1B2D6B !important;text-align:center !important;white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important;}
+  .diploma-foto{top:51.1% !important;left:50% !important;transform:translate(-50%,-50%) !important;width:clamp(150px,32%,200px) !important;height:auto !important;aspect-ratio:1/1 !important;object-fit:cover !important;border-radius:50% !important;border:clamp(3px,1.2vw,6px) solid #DBFBF3 !important;box-shadow:0 8px 20px rgba(13,25,77,.2),0 0 0 clamp(2px,.6vw,3px) #D7B56D !important;background:#DBFBF3 !important;}
+  #p-9.on .diploma-foto{animation:photoPopV6 .75s ease-out .45s both}
+  @keyframes photoPopV6{0%{opacity:0;transform:translate(-50%,-50%) scale(.75)}80%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}100%{transform:translate(-50%,-50%) scale(1)}}
+
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- PORTADA -->
+  <div class="portada" id="p-portada">
+    <picture>
+      <source srcset="assets/portada-mvp.webp" type="image/webp">
+      <img class="portada-img" src="assets/portada-mvp.jpg" alt="Academia Stonecat · ¿Qué tipo de Karen sos?" width="1080" height="1920">
+    </picture>
+    <button class="b b-portada" type="button" onclick="go(1)" aria-label="Empezar inscripción">Empezar inscripción 🚀</button>
+  </div>
+
+  <!-- HEADER -->
+  <div class="hdr" id="hdr">
+    <button class="back-btn" id="backBtn" type="button" onclick="back()">← Volver a la pregunta anterior</button>
+    <img class="logo-header" src="assets/stonecat-logo.jpg" alt="Academia Stonecat">
+    <div class="pbar"><div class="pfill" id="prog"></div></div>
+  </div>
+
+  <!-- PASO 1: DATOS DEL TUTOR -->
+  <div class="s" id="p-1">
+    <div class="lbl">📋 PASO 1 DE 3</div>
+    <h2>Datos del tutor</h2>
+    <div class="sub">Contanos quién sos para mandarte todo por mail</div>
+    <div class="r2">
+      <div class="fg"><label>Nombre *</label><input id="f-n" placeholder="María"></div>
+      <div class="fg"><label>Apellido *</label><input id="f-a" placeholder="López"></div>
+    </div>
+    <div class="fg"><label>Email *</label><input type="email" id="f-e" placeholder="maria@email.com"></div>
+    <div class="fg"><label>Celular *</label><input type="tel" id="f-p" placeholder="+54 11 1234 5678"></div>
+    <div class="fg">
+      <label>¿Cuántos gatitos tenés? *</label>
+      <select id="f-c"><option value="">Seleccioná</option><option>1</option><option>2</option><option>3</option><option>4 o más</option></select>
+    </div>
+    <button class="b b1" onclick="v1()">Siguiente →</button>
+  </div>
+
+  <!-- PASO 2: DATOS DEL GATO -->
+  <div class="s" id="p-2">
+    <div class="lbl">🐾 PASO 2 DE 3</div>
+    <h2>Sobre tu hogar gatuno</h2>
+    <div class="sub">Contanos sobre tu michi principal</div>
+    <div class="fg"><label>Nombre de tu gato *</label><input id="f-cn" placeholder="Michi"></div>
+    <div class="fg">
+      <label>Fecha de nacimiento *</label>
+      <input type="date" id="f-cb">
+      <small style="color:#999;font-size:11px;display:block;margin-top:3px">Aproximada si no sabés la exacta</small>
+    </div>
+    <div class="fg">
+      <label>¿Tu gato sale de casa? *</label>
+      <div class="rads">
+        <div class="rad" onclick="pr(this)">Sí</div>
+        <div class="rad" onclick="pr(this)">No</div>
+        <div class="rad" onclick="pr(this)">A veces</div>
+      </div>
+    </div>
+    <div class="fg" style="margin-top:16px">
+      <label>📸 Subí una foto de tu michi (opcional)</label>
+      <div class="photo-upload-area" id="photo-upload-area" onclick="document.getElementById('f-photo').click()">
+        <div id="photo-placeholder">
+          <div style="font-size:40px">🐱</div>
+          <p>Tocá para subir una foto</p>
+          <small>JPG o PNG · No es obligatorio</small>
+        </div>
+        <img id="photo-preview" alt="Preview">
+      </div>
+      <input type="file" id="f-photo" accept="image/*" style="display:none" onchange="previewPhoto(this)">
+    </div>
+    <button class="b b1" onclick="v2()">Siguiente →</button>
+  </div>
+
+  <!-- PASO 3: INTRO QUIZ -->
+  <div class="s" id="p-3">
+    <div class="lbl">🎯 PASO 3 DE 3</div>
+    <h2>Ahora lo divertido 🎉</h2>
+    <p class="txt" style="margin-bottom:16px">4 preguntas rápidas para descubrir qué tipo de Karen sos.<br><br>Tus respuestas van a <strong>personalizar el contenido</strong> que te mandemos para tu gato.</p>
+    <button class="b b1" onclick="go(4)">Empezar el quiz 🐾</button>
+  </div>
+
+  <!-- PREGUNTA 1 -->
+  <div class="s" id="p-4">
+    <div class="lbl">🎯 PREGUNTA 1 DE 4</div>
+    <h2>¿Cuál es tu reacción cuando tu gato rompe algo?</h2>
+    <div class="opts">
+      <div class="o" onclick="ans(1,'sobreprotectora',this)">😱 Pánico total, reviso que esté bien</div>
+      <div class="o" onclick="ans(1,'zen',this)">😌 Ya fue, los gatos son gatos</div>
+      <div class="o" onclick="ans(1,'gourmet',this)">📸 Le saco foto antes de limpiar</div>
+      <div class="o" onclick="ans(1,'primeriza',this)">😰 No sé, busco en Google</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 2 -->
+  <div class="s" id="p-5">
+    <div class="lbl">🎯 PREGUNTA 2 DE 4</div>
+    <h2>Si tu gato pudiera hablar, ¿qué diría?</h2>
+    <div class="opts">
+      <div class="o" onclick="ans(2,'gourmet',this)">🍽️ "Tengo hambre, algo rico"</div>
+      <div class="o" onclick="ans(2,'jugadora',this)">🎾 "¡Jugá conmigo AHORA!"</div>
+      <div class="o" onclick="ans(2,'zen',this)">😴 "Dejame dormir en paz"</div>
+      <div class="o" onclick="ans(2,'sobreprotectora',this)">💕 "Te amo, gracias por cuidarme"</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 3 -->
+  <div class="s" id="p-6">
+    <div class="lbl">🎯 PREGUNTA 3 DE 4</div>
+    <h2>¿Cuánto gastás por mes en tu michi?</h2>
+    <div class="opts">
+      <div class="o" onclick="ans(3,'primeriza',this)">💵 Solo lo básico</div>
+      <div class="o" onclick="ans(3,'zen',this)">💰 Lo justo y necesario</div>
+      <div class="o" onclick="ans(3,'gourmet',this)">💸 Bastante, siempre hay algo nuevo</div>
+      <div class="o" onclick="ans(3,'sobreprotectora',this)">💎 No quiero ni contar 😅</div>
+    </div>
+  </div>
+
+  <!-- PREGUNTA 4 -->
+  <div class="s" id="p-7">
+    <div class="lbl">🎯 PREGUNTA 4 DE 4</div>
+    <h2>¿Qué hacés con tu gato cuando viajás?</h2>
+    <div class="opts">
+      <div class="o" onclick="ans(4,'sobreprotectora',this)">🧳 Lo llevo conmigo</div>
+      <div class="o" onclick="ans(4,'gourmet',this)">🏨 Hotel cat de lujo</div>
+      <div class="o" onclick="ans(4,'zen',this)">🏠 Un familiar lo cuida</div>
+      <div class="o" onclick="ans(4,'primeriza',this)">❓ Nunca me pasó, no sé</div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="s" id="p-8">
+    <div class="loading">
+      <div class="cat-anim">🎓</div>
+      <p>Calculando tu perfil Karen<br>Te estamos graduando ✨</p>
+    </div>
+  </div>
+
+  <!-- RESULTADO + DIPLOMA -->
+  <div class="s" id="p-9">
+    <div class="rev">✨</div>
+    <h2 style="color:#5EC8E8;text-align:center">¡Ya sos parte de la Academia!</h2>
+    <p class="txt" id="rm"></p>
+
+    <div class="diploma-wrap" id="diploma-capture">
+      <div class="diploma-canvas-container">
+        <img class="diploma-bg" id="diploma-bg-img" alt="Diploma" decoding="async">
+        <div class="diploma-overlay">
+          <div class="diploma-nombre" id="dn"></div>
+          <img class="diploma-foto" id="diploma-cat-photo" alt="Mi michi" style="display:none">
+          <div class="diploma-cat-nombre" id="dc"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="share">
+      <button class="b b1" onclick="shareDiploma()">📱 Compartir</button>
+      <button class="b b3" onclick="rst()">🔄 Reiniciar</button>
+    </div>
+    <p class="txt" style="margin-top:16px;font-size:13px;color:#5EC8E8;font-weight:700">
+      🎁 Revisá tu mail: diploma + tips personalizados según tu perfil
+    </p>
+    <p class="txt" style="margin-top:8px;font-size:12px;color:#28a745;font-weight:700" id="webhook-status">
+      ✅ Datos enviados · WhatsApp en camino 📱
+    </p>
+  </div>
+
+</div><!-- /app -->
+
+<!-- CANVAS OCULTO para exportar con foto del gato dibujada sobre el diploma -->
+<canvas id="diploma-export-canvas" style="display:none"></canvas>
+
+<script>
+
+// ============ DIPLOMAS POR PERFIL ============
+const DIPLOMAS = {
+  sobreprotectora: 'assets/diploma_sobreprotectora.png',
+  zen:             'assets/diploma_zen.png',
+  gourmet:         'assets/diploma_gourmet.png',
+  jugadora:        'assets/diploma_jugadora.png',
+  primeriza:       'assets/diploma_primeriza.png'
+};
+
+// ============ PERFILES KAREN ============
+const P = {
+  sobreprotectora: {n:"Karen Sobreprotectora", icon:"🛡️", d:"No deja que le pase ni una a su michi. Vigila cada maullido, cada estornudo, cada salto. Si el gato bosteza raro, ya está googleando síntomas. Su amor no tiene límites y su veterinario la tiene agendada como contacto frecuente."},
+  zen:             {n:"Karen Zen",             icon:"🧘", d:"Relajada, confía en el instinto gatuno y deja que su michi sea quien es. Sabe que los gatos tienen su propio ritmo y lo respeta. Su casa es un templo de paz felina donde el gato manda y ella lo disfruta."},
+  gourmet:         {n:"Karen Gourmet",         icon:"🍽️", d:"Su gato come mejor que ella y no le da vergüenza admitirlo. Investiga ingredientes, compara marcas y tiene opiniones firmes sobre nutrición felina. Si existe una versión premium, su michi ya la probó."},
+  jugadora:        {n:"Karen Jugadora",        icon:"🎾", d:"Vive inventando juegos, escondites y desafíos para su michi. Su casa parece un parque de diversiones felino. Compra juguetes pero también los fabrica. Cree que un gato aburrido es un gato triste, y tiene razón."},
+  primeriza:       {n:"Karen Primeriza",       icon:"🌱", d:"Recién arranca la aventura gatuna y todo le parece nuevo y emocionante. Tiene mil preguntas, busca en todos lados y quiere hacerlo todo bien desde el día uno. Su entusiasmo es su mejor herramienta."}
+};
+
+let R=[], U={}, rOk=false, currentStep=0;
+
+// ============ NAVEGACIÓN ============
+function go(n){
+  currentStep = n;
+  document.getElementById('p-portada').style.display = n===0?'flex':'none';
+  for(let i=1;i<=9;i++) document.getElementById('p-'+i).classList.remove('on');
+  document.getElementById('hdr').style.display = n===0?'none':'block';
+  if(n>0) document.getElementById('p-'+n).classList.add('on');
+  document.getElementById('prog').style.width = (n/9*100)+'%';
+  const backBtn = document.getElementById('backBtn');
+  const activeScreen = n > 0 ? document.getElementById('p-'+n) : null;
+  if(backBtn){
+    if(n>1 && n<9 && activeScreen){
+      activeScreen.appendChild(backBtn);
+      backBtn.style.display = 'block';
+    }else{
+      document.getElementById('hdr').appendChild(backBtn);
+      backBtn.style.display = 'none';
+    }
+  }
+  document.getElementById('app').scrollTop = 0;
+  window.scrollTo(0,0);
+}
+
+function back(){
+  if(currentStep <= 1) return;
+  if(currentStep === 8){ go(7); return; }
+  go(currentStep - 1);
+}
+
+// ============ PHOTO PREVIEW ============
+function previewPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const preview = document.getElementById('photo-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    const area = document.getElementById('photo-upload-area');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+    area.style.borderColor = '#5EC8E8';
+    area.style.background = '#D5F0FA';
+    U.foto = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ============ WEBHOOK N8N ============
+const WEBHOOK_URL = 'https://lautaroandacollosa.app.n8n.cloud/webhook/ef13ff96-1f56-4ec6-a253-bd440a8c5fb6';
+let webhookSent = false;
+
+async function enviarDatos(perfil) {
+  if (webhookSent) return;
+  webhookSent = true;
+  const payload = {
+    nombre: U.n, apellido: U.a, nombre_completo: U.n+' '+U.a,
+    email: U.e, celular: U.p, cantidad_gatos: U.c,
+    nombre_gato: U.cn, nacimiento_gato: U.cb, gato_sale_de_casa: U.out,
+    foto_gato: U.foto || null,
+    perfil_karen: perfil, respuestas_quiz: R.join(', '),
+    fuente: 'quiz-academia-stonecat', fecha: new Date().toISOString()
+  };
+  try {
+    await fetch(WEBHOOK_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      mode:'no-cors', body:JSON.stringify(payload)
+    });
+  } catch(err) { console.error('Error webhook:', err); }
+}
+
+// ============ VALIDACIÓN PASO 1 ============
+function v1(){
+  let n=document.getElementById('f-n').value.trim();
+  let a=document.getElementById('f-a').value.trim();
+  let e=document.getElementById('f-e').value.trim();
+  let p=document.getElementById('f-p').value.trim();
+  let c=document.getElementById('f-c').value;
+  if(!n||!a||!e||!p||!c){alert('¡Completá todos los campos! 🐾');return;}
+  U.n=n; U.a=a; U.e=e; U.p=p; U.c=c;
+  go(2);
+}
+
+// ============ RADIO BUTTONS ============
+function pr(el){
+  el.parentElement.querySelectorAll('.rad').forEach(r=>r.classList.remove('sel'));
+  el.classList.add('sel');
+  U.out = el.textContent.trim();
+  rOk=true;
+}
+
+// ============ VALIDACIÓN PASO 2 ============
+function v2(){
+  let cn=document.getElementById('f-cn').value.trim();
+  let cb=document.getElementById('f-cb').value;
+  if(!cn||!cb||!rOk){alert('¡Completá todos los campos! 🐾');return;}
+  U.cn=cn; U.cb=cb;
+  go(3);
+}
+
+// ============ QUIZ ============
+function ans(q, perfil, el){
+  R[q-1] = perfil;
+  el.parentElement.querySelectorAll('.o').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  setTimeout(()=>{
+    if(q<4) go(q+4);
+    else { go(8); setTimeout(calc, 1600); }
+  }, 300);
+}
+
+// ============ CALCULAR RESULTADO ============
+function calc(){
+  let c={};
+  R.filter(Boolean).forEach(p=>c[p]=(c[p]||0)+1);
+  let keys = Object.keys(c);
+  let w = keys.length ? keys.reduce((a,b)=>c[a]>=c[b]?a:b) : 'sobreprotectora';
+  let perfil=P[w];
+
+  // Texto resultado
+  document.getElementById('dn').textContent = U.n+' '+U.a;
+  document.getElementById('dc').textContent = U.cn;
+  document.getElementById('rm').innerHTML = '<strong>'+U.n+'</strong>, tu perfil es <strong style="color:#5EC8E8">'+perfil.n+'</strong>.';
+
+  // Diploma: fondo PNG real de Canva
+  const bgImg = document.getElementById('diploma-bg-img');
+  bgImg.src = DIPLOMAS[w];
+
+  // Foto del gato en el diploma
+  const fotoEl = document.getElementById('diploma-cat-photo');
+  if (U.foto) {
+    fotoEl.src = U.foto;
+    fotoEl.style.display = 'block';
+  } else {
+    fotoEl.style.display = 'none';
+  }
+
+  // Enviar webhook
+  enviarDatos(perfil.n);
+
+  // Mostrar resultado
+  go(9);
+
+  // Confetti
+  const em=['🎓','🐱','✨','🎉','💙','🐾'];
+  for(let i=0;i<25;i++){
+    setTimeout(()=>{
+      let d=document.createElement('div');
+      d.className='confetti';
+      d.textContent=em[Math.floor(Math.random()*em.length)];
+      d.style.left=Math.random()*100+'vw';
+      d.style.top='-40px';
+      d.style.animationDuration=(2+Math.random()*2)+'s';
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(),4000);
+    },i*80);
+  }
+}
+
+// ============ EXPORTAR DIPLOMA ============
+// Dibuja sobre Canvas: imagen del diploma + foto del gato + nombre + nombre gato
+async function buildDiplomaCanvas() {
+  return new Promise((resolve, reject) => {
+    const canvas = document.getElementById('diploma-export-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Dimensiones originales del diploma
+    const W = 1080, H = 1920;
+    canvas.width = W;
+    canvas.height = H;
+
+    // 1. Cargar imagen del diploma
+    let c = {};
+    R.filter(Boolean).forEach(p => c[p]=(c[p]||0)+1);
+    let keys = Object.keys(c);
+    let w = keys.length ? keys.reduce((a,b)=>c[a]>=c[b]?a:b) : 'sobreprotectora';
+    
+    const bgImg = new Image();
+    bgImg.onload = function() {
+      ctx.drawImage(bgImg, 0, 0, W, H);
+
+      // 2. Nombre del tutor (encima de línea de puntos y=467)
+      ctx.font = 'bold 48px Nunito, sans-serif';
+      ctx.fillStyle = '#1B2B5C';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const nombreCompleto = U.n + ' ' + U.a;
+      ctx.fillText(nombreCompleto, W/2, 724);
+
+      // 3. Nombre del gato (encima de línea y=1712)
+      ctx.font = 'bold 44px Nunito, sans-serif';
+      ctx.fillText(U.cn, W/2, 1252);
+
+      // 4. Foto del gato (si existe) — círculo 200x200 px centrado sobre el placeholder
+      if (U.foto) {
+        const catImg = new Image();
+        catImg.onload = function() {
+          // Foto circular premium del gato
+          const size = 200;
+          const areaX = (W - size) / 2;
+          const areaY = 880;
+          const areaW = size, areaH = size;
+          
+          // Calcular dimensiones para object-fit: cover cuadrado
+          const imgRatio = catImg.width / catImg.height;
+          let sx=0, sy=0, sw=catImg.width, sh=catImg.height;
+          if (imgRatio > 1) {
+            sw = catImg.height;
+            sx = (catImg.width - sw) / 2;
+          } else {
+            sh = catImg.width;
+            sy = (catImg.height - sh) / 2;
+          }
+          
+          // Marco dorado y foto circular
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(W/2, areaY + size/2, size/2 + 10, 0, Math.PI * 2);
+          ctx.fillStyle = '#D7B56D';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(W/2, areaY + size/2, size/2 + 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#DBFBF3';
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(W/2, areaY + size/2, size/2, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(catImg, sx, sy, sw, sh, areaX, areaY, areaW, areaH);
+          ctx.restore();
+          
+          resolve(canvas);
+        };
+        catImg.src = U.foto;
+      } else {
+        resolve(canvas);
+      }
+    };
+    bgImg.onerror = reject;
+    bgImg.src = DIPLOMAS[w];
+  });
+}
+
+async function shareDiploma() {
+  try {
+    // Construir canvas con todo
+    const canvas = await buildDiplomaCanvas();
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const file = new File([blob], 'diploma-stonecat.png', {type:'image/png'});
+    
+    if (navigator.share && navigator.canShare && navigator.canShare({files:[file]})) {
+      await navigator.share({files:[file], title:'Mi Diploma Stonecat', text:'Ya soy parte de la Academia Stonecat 🐾'});
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'diploma-stonecat.png'; a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ Diploma descargado. Ya podés compartirlo en Stories o WhatsApp.');
+  } catch(e) {
+    console.error(e);
+    alert('No pudimos exportar el diploma en este dispositivo.');
+  }
+}
+
+// ============ RESET ============
+function rst(){
+  R=[]; U={}; rOk=false; webhookSent=false;
+  document.querySelectorAll('.o,.rad').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('input').forEach(i=>i.value='');
+  document.getElementById('f-c').value='';
+  document.getElementById('f-photo').value='';
+  document.getElementById('photo-preview').style.display='none';
+  document.getElementById('photo-placeholder').style.display='block';
+  var area=document.getElementById('photo-upload-area');
+  area.style.borderColor='#ccc'; area.style.background='#FEFCF5';
+  go(0);
+}
+</script>
+</body>
+</html>
